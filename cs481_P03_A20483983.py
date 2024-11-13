@@ -13,14 +13,21 @@ if __name__ == '__main__':
             raise Exception
     except Exception:
         algo = 0
-
+    if algo == 0:
+        algo_type = "Naive Bayes"
+    else:
+        algo_type = "k Nearest Neighbors"
     try:
         size = int(sys.argv[2])
         if not (90 >= size >= 50):
             raise Exception
     except Exception:
         size = 80
-    #print(BoW.normalizing("test string with punction.-&", False))
-    #BoW.build_vocab(False)
-    #print(BoW.create_bag_of_words('This is a test sentence. but need more to test the sentence properly', False))
-    #print(BoW.split_documents(size, False))
+
+    print("Prymon, Alan, A20483983 solution:\nTraining set size: "+str(size)+"%\nClassifier type: "+algo_type)
+    remove_stop_words = False
+    train_set, test_set = BoW.split_documents(size, remove_stop_words)
+    if algo == 0:
+        NB.NB_model(train_set, test_set, remove_stop_words)
+    else:
+        exit(-1)

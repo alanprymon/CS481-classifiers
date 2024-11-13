@@ -9,7 +9,8 @@ def stop_words() -> list:
 
 def normalizing(sentence:str, remove_stop_words:bool) -> str:
     output = sentence.lower()
-    output = ''.join(char for char in output if char not in string.punctuation)
+    for remove_word in string.punctuation:
+        output = output.replace(remove_word, ' ')
     if remove_stop_words:
         words = output.split(' ')
         all_stop_words = stop_words()
@@ -101,12 +102,14 @@ def split_documents(train_size:int, remove_stop_words:bool) -> ([(int, {str, int
                 except Exception:
                     pass
     amount = len(documents)
-    for i in range(amount - 0):
+    for i in range(amount):
         doc = documents[i]
-        if (i+1)/amount <= train_size:
+        if (i+1)/amount <= (train_size/100):
             training_set.append(doc)
         if (i+1)/amount >= 0.80:
             testing_set.append(doc)
+    #print(str(len(training_set))) used to check if they are changing size and they are
+    #print(str(len(testing_set)))
     return training_set, testing_set
 
 
