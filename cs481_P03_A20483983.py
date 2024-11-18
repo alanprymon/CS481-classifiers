@@ -1,7 +1,5 @@
 import sys
 
-from PIL.ImImagePlugin import split
-
 import cs481_p03_A20483983_Bag_of_Words as BoW
 import cs481_P03_A20483983_Naive_Bayes as NB
 import cs481_P03_A20483983_K_Nearest_Neighbors as KNN
@@ -24,10 +22,13 @@ if __name__ == '__main__':
     except Exception:
         size = 80
 
-    print("Prymon, Alan, A20483983 solution:\nTraining set size: "+str(size)+"%\nClassifier type: "+algo_type)
+    BoW.prep_data(True)
+    vocab = BoW.build_vocab()
+
+    '''print("Prymon, Alan, A20483983 solution:\nTraining set size: "+str(size)+"%\nClassifier type: "+algo_type)
     remove_stop_words = False
     train_set, test_set = BoW.split_documents(size, remove_stop_words)
     if algo == 0:
         NB.NB_model(train_set, test_set, remove_stop_words)
     else:
-        exit(-1)
+        exit(-1)'''

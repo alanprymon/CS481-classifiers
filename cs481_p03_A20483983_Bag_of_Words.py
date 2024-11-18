@@ -1,24 +1,66 @@
 import nltk
+nltk.download('wordnet')
+nltk.download('stopwords')
+from nltk.stem import WordNetLemmatizer
 import os
 import csv
 import string
 
-# returns a list of strings of stop words in english language
-def stop_words() -> list:
-    return nltk.corpus.stopwords.words('english')
+path_bad_data = "RateMyProfessor_Data_Set/RateMyProfessor_Sample_Data.csv"
+path_clean_data = "stored_data/clean_data_set.csv"
+# note to self prep_data has a makedir with folder name so don't change folder name only here
 
-def normalizing(sentence:str, remove_stop_words:bool) -> str:
+def prep_data(force_overwrite:bool=False):
+    if not force_overwrite:
+        if os.path.isfile(path_clean_data):
+            return
+    os.makedirs("stored_data/", exist_ok=True)
+    file_w = open(path_clean_data, 'w')
+    write_to = csv.writer(file_w, lineterminator='\n')
+    file_r = open(path_bad_data, "r")
+    file_read = csv.reader(file_r)
+    first = True
+    for line in file_read:
+        if first:
+            first = False
+            continue
+        comment = line[22]
+        if comment != "" and comment != "No Comments":
+            comment = normalizing(comment)
+            good_data = [int(float(line[14])), int(float(line[15])), comment]
+            write_to.writerow(good_data)
+    file_r.close()
+    file_w.close()
+
+def normalizing(sentence:str, remove_punctuation:bool=True, remove_stop_words:bool=True, lemmatization:bool=True) -> str:
+    # lower casing
     output = sentence.lower()
-    for remove_word in string.punctuation:
-        output = output.replace(remove_word, ' ')
+
+    # removal of punctuation and symbols
+    if remove_punctuation:
+        for remove_word in string.punctuation:
+            output = output.replace(remove_word, ' ')
+
+    # removal of stop words
     if remove_stop_words:
         words = output.split(' ')
-        all_stop_words = stop_words()
+        all_stop_words = nltk.corpus.stopwords.words('english')
         output = ''
         for word in words:
-            if word not in all_stop_words:
-                output = output + word + ' '
+            if word != '':
+                if word not in all_stop_words:
+                    output = output + word + ' '
         output = output[:-1]
+
+    # lemmatization
+    if lemmatization:
+        words = output.split(' ')
+        output = ''
+        lem = WordNetLemmatizer()
+        for word in words:
+            output = output + lem.lemmatize(word) + ' '
+        output = output[:-1]
+
     return output
 
 def build_vocab(remove_stop_words:bool):
@@ -49,6 +91,33 @@ def build_vocab(remove_stop_words:bool):
     for word in vocab:
         file_write.write(word + "\n")
     file_write.close()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def get_vocab_file(stop_words_removed:bool):
     if stop_words_removed:
